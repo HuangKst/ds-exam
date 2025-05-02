@@ -122,8 +122,21 @@ export class ExamStack extends cdk.Stack {
       },
     });
     
-    topic1.addSubscription(new subs.SqsSubscription(queueA));
-    topic1.addSubscription(new subs.LambdaSubscription(lambdaYFn));
+    topic1.addSubscription(new subs.SqsSubscription(queueA, {
+      filterPolicyWithMessageBody: {
+        "address": {
+          "country": ["Ireland", "China"]
+        }
+      } as any
+    }));
+    
+    topic1.addSubscription(new subs.LambdaSubscription(lambdaYFn, {
+      filterPolicyWithMessageBody: {
+        "address": {
+          "country": [{"anything-but": ["Ireland", "China"]}]
+        }
+      } as any
+    }));
     lambdaXFn.addEventSource(new events.SqsEventSource(queueA));
   }
 }
