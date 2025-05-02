@@ -71,7 +71,13 @@ export class ExamStack extends cdk.Stack {
     });
 
     const anEndpoint = api.root.addResource("patha");
-
+    // 为新的 GET /crew/movies/{movieId} 端点添加资源和方法
+    const crew = api.root.addResource('crew');
+    const movies = crew.addResource('movies');
+    const movieResource = movies.addResource('{movieId}');
+    movieResource.addMethod('GET', new apig.LambdaIntegration(question1Fn));
+    // 授予 lambda 读取 DynamoDB 表的权限
+    table.grantReadData(question1Fn);
 
     // ==================================
     // Question 2 - Event-Driven architecture
